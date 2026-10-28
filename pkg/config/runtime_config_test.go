@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -12,6 +13,25 @@ func Test_buildCacheOptions(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(cacheOptions.ReaderFailOnMissingInformer).To(BeTrue())
 	g.Expect(cacheOptions.ByObject).To(HaveLen(8))
+}
+
+func Test_buildCacheOptions_transforms(t *testing.T) {
+	g := NewWithT(t)
+	byObject := BuildCacheOptions().ByObject
+	transformed := map[string]bool{}
+	for obj, opts := range byObject {
+		transformed[fmt.Sprintf("%T", obj)] = opts.Transform != nil
+	}
+	g.Expect(transformed).To(Equal(map[string]bool{
+		"*v1.Pod":                            true,
+		"*v1.Service":                        true,
+		"*v1.NetworkPolicy":                  true,
+		"*v1alpha1.PolicyEndpoint":           true,
+		"*v1.Namespace":                      false,
+		"*v1alpha1.ApplicationNetworkPolicy": false,
+		"*v1alpha1.ClusterNetworkPolicy":     false,
+		"*v1alpha1.ClusterPolicyEndpoint":    false,
+	}))
 }
 
 func Test_bindFlagsKubeAPIRateLimits(t *testing.T) {

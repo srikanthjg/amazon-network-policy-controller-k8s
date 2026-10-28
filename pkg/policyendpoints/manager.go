@@ -33,7 +33,7 @@ const (
 	// to track when NPC last created or updated the resource. NPA reads this to
 	// compute E2E policy programming latency (same pattern as kube-proxy's
 	// endpoints.kubernetes.io/last-change-trigger-time on EndpointSlice).
-	LastChangeTriggerTimeAnnotation = "networking.k8s.aws/last-change-trigger-time"
+	LastChangeTriggerTimeAnnotation = k8s.LastChangeTriggerTimeAnnotation
 )
 
 // setLastChangeTriggerTime sets the E2E latency annotation on a PolicyEndpoint.
